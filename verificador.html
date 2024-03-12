@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Números</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body{
+            background-color: skyblue;
+            display: flex;
+            
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            
+            background-color: #fff;
+            width: 500px;
+            height: 400px;
+            border-radius: 10px;
+            
+        }
+
+        .inputs {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+            text-align: center;
+        }
+
+        .num-input {
+            width: 120px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .line {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .radios {
+            display: flex;
+            justify-content: center;
+            align-items: center;  
+        }
+
+        .btn {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: dodgerblue;
+            color: #fff;
+            border: none;
+        }
+
+        .btn:hover {
+            background-color: lightblue;
+            color: #333;
+            transition: .5s;
+        }
+    </style>
+
+</head>
+<body>
+    
+    <div class="form">
+        <h1>Verificador de Números</h1>
+        <div class="inputs">
+            <div class="line">
+                <input type="text" class="num-input" name="n1" pattern="[0-9]*" inputmode="numeric" placeholder="Digite um número">
+                <span class="span-req"></span>
+            </div>
+            <div class="line">
+                <input type="text" class="num-input" name="n2" pattern="[0-9]*" inputmode="numeric" placeholder="Digite um número">
+                <span class="span-req"></span>
+            </div>
+            <div class="line">
+                <input type="text" class="num-input" name="n3" pattern="[0-9]*" inputmode="numeric" placeholder="Digite um número">
+                <span class="span-req"></span>
+            </div>
+        </div>
+        <div class="radios">
+            <input type="radio" name="option" value="1">Maior e Menor
+            <input type="radio" name="option" value="2">Soma
+            <input type="radio" name="option" value="3"> Par ou Ímpar
+            <input type="radio" name="option" value="4"> Fatorial
+            <input type="radio" name="option" value="5">Primo
+        </div>
+        <button class="btn" onclick="verificar()">Verificar</button>
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        function verificar() {
+            let n1 = parseInt(document.querySelector('input[name="n1"]').value);
+            let n2 = parseInt(document.querySelector('input[name="n2"]').value);
+            let n3 = parseInt(document.querySelector('input[name="n3"]').value);
+            let radios = document.querySelectorAll('input[name="option"]');
+            let msg = document.getElementById('msg');
+            let spans = document.querySelectorAll(".span-req");
+            
+            msg.innerHTML = ""; // Limpar resultados anteriores
+
+            radios.forEach(function(radio) {
+                if (radio.checked) {
+                    let option = parseInt(radio.value);
+
+                    if (option === 1) {
+                        maiorMenor(n1, n2, n3);
+                    } else if (option === 2) {
+                        somar(n1, n2, n3);
+                    } else if (option === 3) {
+                        paridade(n1, spans[0]);
+                        paridade(n2, spans[1]);
+                        paridade(n3, spans[2]);
+                    } else if (option === 4) {
+                        spans[0].textContent = `O fatorial é ${fatorial(n1)}`;
+                        spans[1].textContent = `O fatorial é ${fatorial(n2)}`;
+                        spans[2].textContent = `O fatorial é ${fatorial(n3)}`;
+                    } else if(option === 5) {
+                        isPrime(n1, spans[0]);
+                        isPrime(n2, spans[1]);
+                        isPrime(n3, spans[2]);
+                    }
+
+                }
+            });
+        }
+
+        function maiorMenor(n1, n2, n3) {
+            let maior = Math.max(n1, n2, n3);
+            let menor = Math.min(n1, n2, n3);
+            let texto = document.createElement("span");
+            texto.textContent = `O maior número é ${maior} e o menor é ${menor}. `;
+            msg.appendChild(texto);
+            if(n1=n2=n3){
+                texto.textContent = `Todos os números são iguais. `;
+                msg.appendChild(texto);
+            }
+        }
+
+        function somar(n1, n2, n3) {
+            let res = n1 + n2 + n3;
+            let texto = document.createElement("span");
+            texto.textContent = `A soma dos números é ${res}. `;
+            msg.appendChild(texto);
+        }
+
+        function paridade(n, span) {
+            if (n % 2 === 0) {
+                span.textContent = `${n} é par.`;
+            } else {
+                span.textContent = `${n} é ímpar.`;
+            }
+        }
+
+        function fatorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function isPrime(n, span) {
+            if(n <= 1) {
+                span.textContent = `${n} não é primo.`;
+            }
+            else {
+                for(let i = 2; i <= Math.sqrt(n); i++) {
+                    if(n % i === 0) {
+                        span.textContent = `${n} não é primo.`;
+                    }
+                }
+                span.textContent = `${n} é primo.`;
+            }
+        }
+
+        document.querySelectorAll('.num-input').forEach(function(input) {
+            input.addEventListener("input", function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    </script>
+</body>
+</html>
